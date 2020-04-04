@@ -2,6 +2,7 @@ Preload = function(game){}
 
 Preload.prototype = {
 	preload:function(){
+		console.log("preload "+this);
 		this.load.image("background","assets/images/backyard.png");
 		this.load.image("apple","assets/images/apple.png");
 		this.load.image("arrow","assets/images/arrow.png");
@@ -13,6 +14,7 @@ Preload.prototype = {
 		this.load.image("rubber_duck","assets/images/rubber_duck.png");
 	},
 	create:function(){
-		console.log("terminamos de cargar GAAA");
+		console.log("create del preload "+this);
+		this.state.start("Menu");
 	}
 }
