@@ -3,7 +3,10 @@
 <head>
 	<title></title>
 	<style type="text/css">
-		
+		html{
+			padding: 0;
+			margin: 0;
+		}
 	</style>
 </head>
 <body>

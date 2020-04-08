@@ -6,7 +6,7 @@ Game.prototype = {
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 	    this.scale.pageAlignHorizontally = true;
 	    this.scale.pageAlignVertically = true;
-		
+
 		this.levelData =  JSON.parse(this.cache.getText("level"));
 		console.log(this.levelData.platformData);
 		this.platforms = this.game.add.group();
@@ -14,9 +14,14 @@ Game.prototype = {
 	},
 	createPlatform:function(element){
 		//primera forma
-		let platform = this.game.add.sprite(element.x,element.y,'platform');
-		this.platforms.add(platform);
+		//let platform = this.game.add.sprite(element.x,element.y,'platform');
+		//this.platforms.add(platform);
 
 		//segunda forma
+		//this.platforms.create(element.x,element.y,'platform');
+
+		//tercera forma
+		let platform = new Phaser.Sprite(this,element.x,element.y,'platform');
+		this.platforms.add(platform);
 	}
 }
