@@ -24,18 +24,30 @@ Game.prototype = {
 			candy.events.onInputDown.add(this.clickElement,this);
 		}
 		
-		let pet = this.add.sprite(0,0,"pet");
-		pet.anchor.setTo(0.5);
-		pet.y = this.world.centerY;
-		pet.x = this.world.centerX;
+		this.pet = this.add.sprite(0,0,"pet");
+		this.pet.anchor.setTo(0.5);
+		this.pet.y = this.world.centerY;
+		this.pet.x = this.world.centerX;
+
+		this.pet.animations.add('funnyfaces', [1, 2, 3, 2, 1], 7, false);	
 
 	},
 	clickBackground:function(sprite,event){
 		if(this.currentKey !=""){
-			this.clone(event.position);
+			this.clone(event.position,this);
 		}
-		console.log(event.position.x);
-		console.log(event.position.y);
+	},
+	clone:function(position){
+		let element_clone = this.add.sprite(position.x,position.y,this.currentKey);
+		element_clone.anchor.setTo(0.5);
+
+		let tweens = this.add.tween(this.pet).to({x:element_clone.x,y:element_clone.y});
+		tweens.start();
+		tweens.onComplete.add(this.playAnimation,this);
+		this.pet.bringToTop();
+	},
+	playAnimation:function(){
+		this.pet.animations.play("funnyfaces");
 	},
 	clickElement:function(sprite){
 		this.currentKey = sprite.key;
