@@ -2,6 +2,11 @@ Game = function(game){}
 
 Game.prototype = {
 	create:function(){
+
+		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+	    this.scale.pageAlignHorizontally = true;
+	    this.scale.pageAlignVertically = true;
+		
 		this.levelData =  JSON.parse(this.cache.getText("level"));
 		console.log(this.levelData.platformData);
 		this.platforms = this.game.add.group();

@@ -2,6 +2,7 @@ Preload = function(game){}
 
 Preload.prototype = {
 	preload : function(){
+		
 		this.load.image("actionButton","assets/images/actionButton.png");
 		this.load.image("arrowButton","assets/images/arrowButton.png");
 		this.load.image("barrel","assets/images/barrel.png");

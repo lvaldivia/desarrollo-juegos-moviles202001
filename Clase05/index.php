@@ -2,6 +2,9 @@
 <html>
 <head>
 	<title></title>
+	<style type="text/css">
+		
+	</style>
 </head>
 <body>
 	<script type="text/javascript" src="lib/phaser.min.js?v=<?php echo time() ?>"></script>
