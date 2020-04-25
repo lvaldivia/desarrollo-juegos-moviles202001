@@ -10,24 +10,16 @@ Game.prototype = {
 													this.game.height,'bakground');
 		this.background.autoScroll(-100,0);
 
-		this.player = this.game.add.sprite(0,0,'player');
-		this.player.anchor.setTo(0.5);
-		this.player.x = this.game.world.centerX;
-		this.player.y = this.game.world.centerY;
-		this.player.animations.add("fly",[0,1,2],10,true);
-		this.player.scale.setTo(4);
 
-		this.game.physics.arcade.enable(this.player);
-		this.player.body.gravity.y = this.gravity;
-		this.player.body.allowGravity = false;
-
-		this.player.frame = 1;
+		this.player = new Player(this.game,this.gravity);
+		this.game.add.existing(this.player);
 
 		this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		this.spaceBar.onDown.add(this.flap,this);
 		this.game.input.onDown.add(this.flap,this);
 
 		this.walls = this.game.add.group();
+		//this.walls.add(this.player);
 		this.spawnWall = 0;
 		this.score = 0;
 
@@ -37,22 +29,37 @@ Game.prototype = {
 		this.maxScore = this.game.add.text(0,0,'Max Score');
 		this.maxScore.x = this.game.width - 150;
 		this.maxScore.fill = "#FFFFFF";
+		this.points = 0;
 
 	},
 	update:function(){
+		if(!this.player.alive)return;
 		this.spawnWall += this.game.time.elapsed;
 		if(this.spawnWall>3000){
 			this.spawnWall = 0;
 			this.createWall();
 		}
-		if(this.player.body.velocity.y > -20){
-			this.player.frame = 3;
-		}else{
-			this.player.animations.play("fly");
-		}
+		this.game.physics.arcade.overlap(this.player,this.walls,null,this.killPlayer,this);
+		this.walls.forEachAlive(function(wall){
+			if(wall.x<-wall.width){
+				wall.kill();
+			}else{
+				if(!wall.scored){
+					if(this.player.x>=wall.x){
+						wall.scored = true;
+						this.points +=0.5;
+						this.scoreText.text = "Score : "+this.points;
+					}
+				}
+			}
+		},this);
+	},
+	killPlayer:function(){
+		this.player.kill();
+		this.walls.callAll("kill");
 	},
 	flap:function(){
-		this.player.body.velocity.y = this.jumpForce;
+		this.player.flap(this.jumpForce);
 	},
 	createWall:function(){
 		let wallY = this.game.rnd.integerInRange(this.game.height*0.3,this.game.height*0.7);
@@ -72,7 +79,8 @@ Game.prototype = {
 		if(wall){
 			wall.reset(this.game.width,wallY);
 		}else{
-			wall = this.game.add.sprite(this.game.width,wallY,'wall');
+			wall = new Wall(this.game,{x:this.game.width,y:wallY});
+			//wall = this.game.add.sprite(this.game.width,wallY,'wall');
 		}
 		this.game.physics.arcade.enable(wall);
 		wall.body.velocity.x = -200;
