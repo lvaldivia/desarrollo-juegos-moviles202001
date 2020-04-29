@@ -27,10 +27,23 @@ Game.prototype = {
 		this.scoreText.fill = "#FFFFFF";
 
 		this.maxScore = this.game.add.text(0,0,'Max Score');
-		this.maxScore.x = this.game.width - 150;
+		this.maxScore.x = this.game.width - 250;
 		this.maxScore.fill = "#FFFFFF";
 		this.points = 0;
 
+		this.gameOverText = this.game.add.text(0,0,'Game Over');
+		this.gameOverText.x = this.game.world.centerX;
+		this.gameOverText.y = this.game.world.centerY;
+		this.gameOverText.anchor.setTo(0.5);
+		this.gameOverText.inputEnabled = true;
+		this.gameOverText.visible = false;
+		this.gameOverText.events.onInputDown.add(this.restartGame,this);
+		if(localStorage.points!=null){
+			this.maxScore.text = "Max Score "+parseInt(localStorage.points);
+		}
+	},
+	restartGame:function(){
+		this.state.start("Game");
 	},
 	update:function(){
 		if(!this.player.alive)return;
@@ -49,6 +62,7 @@ Game.prototype = {
 						wall.scored = true;
 						this.points +=0.5;
 						this.scoreText.text = "Score : "+this.points;
+						
 					}
 				}
 			}
@@ -57,6 +71,15 @@ Game.prototype = {
 	killPlayer:function(){
 		this.player.kill();
 		this.walls.callAll("kill");
+		if(localStorage.points != null){
+			let temp = localStorage.points;
+			if(temp<this.points){
+				localStorage.points = parseInt(this.points);
+			}
+		}else{
+			localStorage.points = parseInt(this.points);	
+		}
+		this.gameOverText.visible= true;
 	},
 	flap:function(){
 		this.player.flap(this.jumpForce);
