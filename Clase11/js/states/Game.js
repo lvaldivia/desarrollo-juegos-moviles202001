@@ -20,10 +20,34 @@ Game.prototype = {
 		this.numSums = 1000;
 		this.hitSound = this.game.add.audio('hit');
 		this.loadLevel();
+		this.physics.startSystem(Phaser.Physics.ARCADE);
 	},
 	loadLevel:function(){
-
+		this.levelName = "level"+this.currentLevel;
+		this.levelData = JSON.parse(this.game.cache.getText(this.levelName));
+		this.zombieElapsed = 0;
+		this.currentZombie = 0;
+		
+		this.zombieData = this.levelData.zombies;
+		this.totalZombie = this.zombieData.length - 1;
+		this.zombieTotalTime = this.zombieData[this.currentZombie].time * 1000;
 	},
+	update:function(){
+		this.zombieElapsed+=this.game.time.elapsed;
+		if(this.zombieElapsed>=this.zombieTotalTime){
+			if(this.currentZombie < this.totalZombie){
+				this.currentZombie++;
+				this.generateZombie();
+				this.zombieTotalTime =  this.zombieData[this.currentZombie].time * 1000;
+			}	
+		}
+		
+	},
+	generateZombie:function(){
+		//generar zombies con pool de objetos y uilizar el arrya de posiciones de arriba this.zombie_y_positions
+		//las plantas deben ser con pool de objetos
+	}
+
 	createLand:function(){
 		this.patches = this.game.add.group();
 		let rectangle= this.game.add.bitmapData(40,50);
@@ -35,11 +59,19 @@ Game.prototype = {
 
 		for(let i = 0;i < 10;i++){
 			for(j = 0;j < 5;j++){
-				patch = new Patch(this.game,{x:64+i*40,y:24+j*50,rectangle});
+				patch = new Patch(this.game,{x:64+i*40,y:24+j*50},rectangle);
 				this.patches.add(patch);
-				patch.SetAlhpa(dark);
-				dark = !dark;
+				patch.createPlant.add(this.putPlant,this);
+				dark = patch.SetAlhpa(dark);
 			}
+		}
+	},
+	putPlant:function(x,y,sprite){
+		if(this.currentSelection){
+			sprite.busy = true;
+			let plant = new Plant(this.game, {x: x,y: y},this.currentSelection);
+			this.plants.add(plant);
+			this.clearSelection();
 		}
 	},
 	createGUI:function(){
@@ -53,23 +85,21 @@ Game.prototype = {
 		this.buttons = this.game.add.group();
 		let button;
 		this.buttonData.forEach(function(element,index){
-			button = new Button(this.game,{x:80+index*40,y:this.game.height- 35},element.btnAsset)
-			button.buttonData = element;
+			button = new Button(this.game,{x:80+index*40, 
+											y:this.game.height- 35},element,index);
+			button.createElement.add(this.showElement,this);
 			this.buttons.add(button);
 		},this);
 	},
+	showElement:function(element){
+		this.currentSelection = element;
+		
+	},
 	clearSelection:function(){
 		this.currentSelection = null;
-		this.buttons.forEach(function(element){
-			element.alpha = 1;
-			element.selected = false;
+		this.buttons.forEach(function(element,index){
+			element.unselected();
 		},this);
-	},
-	clickButton:function(sprite){
-		if(!sprite.selected){
-			this.clearSelection();
-
-		}
 	},
 	updateStats:function(){
 
