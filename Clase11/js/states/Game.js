@@ -35,12 +35,10 @@ Game.prototype = {
 
 		for(let i = 0;i < 10;i++){
 			for(j = 0;j < 5;j++){
-				//para la siguiente sesión esto debe ser una clase
-				patch = new Phaser.Sprite(this.game,64+i*40,24+j*50,rectangle);
+				patch = new Patch(this.game,{x:64+i*40,y:24+j*50,rectangle});
 				this.patches.add(patch);
-				alpha = dark ? 0.2 : 0.1;
+				patch.SetAlhpa(dark);
 				dark = !dark;
-				patch.alpha = alpha;
 			}
 		}
 	},
@@ -55,9 +53,7 @@ Game.prototype = {
 		this.buttons = this.game.add.group();
 		let button;
 		this.buttonData.forEach(function(element,index){
-			//para la siguiente sesión esto debe ser una clase
-			button = new Phaser.Button(this.game,80+index*40,
-							this.game.height- 35,element.btnAsset,this.clickButton, this);
+			button = new Button(this.game,{x:80+index*40,y:this.game.height- 35},element.btnAsset)
 			button.buttonData = element;
 			this.buttons.add(button);
 		},this);
