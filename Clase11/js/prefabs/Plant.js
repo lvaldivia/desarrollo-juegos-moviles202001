@@ -1,5 +1,4 @@
 Plant = function(game,position,element){
-	console.log(element);
 	Phaser.Sprite.call(this,game,position.x,position.y,element.plantAsset);
 	this.game = game;
 	this.element = element;
@@ -10,7 +9,9 @@ Plant = function(game,position,element){
 	this.shootingTime = 1000;
 	this.producingTime = 5000;
 	this.shootingElapsed = 0;
-	this.producingTime = 0;
+	this.producingElapsed = 0;
+	this.reset(position.x,position.y,this.element);
+	this.createSun = new Phaser.Signal();
 }
 
 Plant.prototype = Object.create(Phaser.Sprite.prototype);
@@ -62,6 +63,7 @@ Plant.prototype.update = function(){
 Plant.prototype.generateSun = function(){
 	if(!this.isSunProducer)return;
 	//TO-DO generate Sun
+	this.createSun.dispatch();
 }
 
 

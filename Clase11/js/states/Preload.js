@@ -17,8 +17,8 @@ Preload.prototype = {
 		this.load.image("sunflower","assets/images/sunflower.png");
 		this.load.image("deadZombie","assets/images/dead_zombie.png");
 		this.load.spritesheet("chicken","assets/images/chicken_sheet.png",25,25,3);
-		this.load.spritesheet("zombie","assets/images/zombie_sheet.png",30,50,3);
-		this.load.spritesheet("plant","assets/images/plant_sheet.png",24,40,3);
+		this.load.spritesheet("zombie","assets/images/zombie_sheet.png",31,50,3);
+		this.load.spritesheet("plant","assets/images/plant_sheet.png",25,40,3);
 		this.load.spritesheet("sun","assets/images/sun_sheet.png",30,30,2);
 
 		this.load.text("buttonData","assets/data/buttons.json");

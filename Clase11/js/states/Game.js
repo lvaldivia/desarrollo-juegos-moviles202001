@@ -11,16 +11,19 @@ Game.prototype = {
 	create:function(){
 		this.background = this.game.add.sprite(0,0,'background');
 		this.createLand();
-		this.createGUI();
+		
 		this.bullets = this.game.add.group();
 		this.plants  = this.game.add.group();
 		this.zombies = this.game.add.group();
 		this.suns = this.game.add.group();
 
 		this.numSums = 1000;
+		this.createGUI();
 		this.hitSound = this.game.add.audio('hit');
 		this.loadLevel();
 		this.physics.startSystem(Phaser.Physics.ARCADE);
+		this.sunElapsed = 0;
+		this.totalSunElapsed = this.sun_frequency * 1000;
 	},
 	loadLevel:function(){
 		this.levelName = "level"+this.currentLevel;
@@ -33,8 +36,13 @@ Game.prototype = {
 		this.zombieTotalTime = this.zombieData[this.currentZombie].time * 1000;
 	},
 	update:function(){
+		this.sunElapsed+= this.game.time.elapsed;
+		if(this.sunElapsed>=this.totalSunElapsed){
+			this.sunElapsed = 0;
+			this.generateSun();
+		}
 		this.zombieElapsed+=this.game.time.elapsed;
-		if(this.zombieElapsed>=this.zombieTotalTime){
+		/*if(this.zombieElapsed>=this.zombieTotalTime){
 			if(this.currentZombie < this.totalZombie){
 				this.zombieElapsed  = 0;
 				this.currentZombie++;
@@ -44,13 +52,29 @@ Game.prototype = {
 				this.generateZombie(this.zombieData[this.currentZombie]);
 				this.zombieTotalTime =  this.zombieData[this.currentZombie].time * 1000;
 			}	
-		}
+		}*/
 		this.zombies.forEachAlive(function(zombie){
 			if(zombie.x < 50){
 				zombie.kill();
 			}
 		});
+	},
+	generateSun:function(){
+		let newSun = this.suns.getFirstDead();
+		let x = this.game.rnd.integerInRange(40,420);
+		let y = -20;
+		if(!newSun){
+			newSun = new Sun(this,x,y,this.sun_velocity);
+			this.suns.add(newSun);
+			newSun.increaseSun.add(this.updateSuns,this);
+		}else{
+			newSun.reset(x,y);
+		}
 		
+	},
+	updateSuns:function(points){
+		this.numSums+=points;
+		this.updateStats();
 	},
 	generateZombie:function(element){
 		//GENERAR zombies con pool de objetos y utilizar el array de posiciones de zombies this.zombie_y_positions
@@ -85,11 +109,14 @@ Game.prototype = {
 		}
 	},
 	putPlant:function(x,y,sprite){
-		if(this.currentSelection){
+		if(this.currentSelection && this.currentSelection.cost <= this.numSums){
 			sprite.busy = true;
 			let plant = new Plant(this.game, {x: x,y: y},this.currentSelection);
 			this.plants.add(plant);
+			plant.createSun.add(this.generateSun,this);
+			this.numSums -= this.currentSelection.cost;
 			this.clearSelection();
+			this.updateStats();
 		}
 	},
 	createGUI:function(){
@@ -120,6 +147,6 @@ Game.prototype = {
 		},this);
 	},
 	updateStats:function(){
-
+		this.sunLabel.text = this.numSums;
 	}
 }
