@@ -36,17 +36,35 @@ Game.prototype = {
 		this.zombieElapsed+=this.game.time.elapsed;
 		if(this.zombieElapsed>=this.zombieTotalTime){
 			if(this.currentZombie < this.totalZombie){
+				this.zombieElapsed  = 0;
 				this.currentZombie++;
-				this.generateZombie();
+				if(this.totalZombie <= this.currentZombie){
+					this.currentZombie = 0;
+				}
+				this.generateZombie(this.zombieData[this.currentZombie]);
 				this.zombieTotalTime =  this.zombieData[this.currentZombie].time * 1000;
 			}	
 		}
+		this.zombies.forEachAlive(function(zombie){
+			if(zombie.x < 50){
+				zombie.kill();
+			}
+		});
 		
 	},
-	generateZombie:function(){
-		//generar zombies con pool de objetos y uilizar el arrya de posiciones de arriba this.zombie_y_positions
-		//las plantas deben ser con pool de objetos
-	}
+	generateZombie:function(element){
+		//GENERAR zombies con pool de objetos y utilizar el array de posiciones de zombies this.zombie_y_positions
+		let posY = this.game.rnd.integerInRange(0,this.zombie_y_positions.length)
+		let zombie = this.zombies.getFirstDead();
+		if(zombie){
+			console.log("Restarting Zombie");
+			zombie.reset(this.game.width - 50,this.zombie_y_positions[posY],element);
+		}else{
+			zombie = new Zombie(this.game,{x:this.game.width - 50,y:this.zombie_y_positions[posY]},element);
+		}
+		
+		this.zombies.add(zombie);
+	},
 
 	createLand:function(){
 		this.patches = this.game.add.group();
