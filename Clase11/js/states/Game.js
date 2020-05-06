@@ -147,6 +147,7 @@ Game.prototype = {
 		},this);
 	},
 	updateStats:function(){
+		console.log("HOLAAAA");
 		this.sunLabel.text = this.numSums;
 	}
 }
