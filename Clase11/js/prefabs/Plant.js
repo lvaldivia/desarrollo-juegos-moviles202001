@@ -63,6 +63,7 @@ Plant.prototype.update = function(){
 Plant.prototype.generateSun = function(){
 	if(!this.isSunProducer)return;
 	//TO-DO generate Sun
+	
 	this.createSun.dispatch();
 }
 

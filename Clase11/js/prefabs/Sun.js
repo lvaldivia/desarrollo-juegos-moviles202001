@@ -1,6 +1,7 @@
 Sun = function(game,x,y,velocity){
 	Phaser.Sprite.call(this,game,x,y,'sun');
 	this.game = game;
+	this.velocity = velocity;
 	this.game.physics.arcade.enable(this);
 	this.body.velocity.y = velocity;
 	//this.animations.add('shine',[0,1,0],10,true);
@@ -28,4 +29,9 @@ Sun.prototype.update = function(){
 Sun.prototype.killSun = function(){
 	this.increaseSun.dispatch(25);
 	this.kill();
+}
+
+Sun.prototype.reset = function(x,y){
+	Phaser.Sprite.prototype.reset.call(this,x,y);
+	this.body.velocity.y = this.velocity;
 }

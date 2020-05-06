@@ -63,13 +63,13 @@ Game.prototype = {
 		let newSun = this.suns.getFirstDead();
 		let x = this.game.rnd.integerInRange(40,420);
 		let y = -20;
-		if(!newSun){
+		//if(!newSun){
 			newSun = new Sun(this,x,y,this.sun_velocity);
 			this.suns.add(newSun);
 			newSun.increaseSun.add(this.updateSuns,this);
-		}else{
+		/*}else{
 			newSun.reset(x,y);
-		}
+		}*/
 		
 	},
 	updateSuns:function(points){
