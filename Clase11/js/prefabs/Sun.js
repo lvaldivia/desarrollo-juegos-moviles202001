@@ -21,8 +21,10 @@ Sun.prototype.constructor = Sun;
 Sun.prototype.update = function(){
 	this.timerElapsed+=this.game.time.elapsed;
 	if(this.timerElapsed>=this.totalSunElapsed){
+		let tween  = this.game.add.tween(this).to({alpha:0});
+		tween.start();
+		tween.onComplete.add(this.kill,this);
 		this.totalSunElapsed = 0;
-		this.kill();
 	}
 }
 
@@ -31,7 +33,11 @@ Sun.prototype.killSun = function(){
 	this.kill();
 }
 
-Sun.prototype.reset = function(x,y){
+Sun.prototype.kill = function(){
+	Phaser.Sprite.prototype.kill.call(this);
+}
+
+Sun.prototype.reset = function(x,y,velocity){
 	Phaser.Sprite.prototype.reset.call(this,x,y);
-	this.body.velocity.y = this.velocity;
+	this.body.velocity.y = velocity;
 }

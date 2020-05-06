@@ -12,11 +12,11 @@ Plant = function(game,position,element){
 	this.producingElapsed = 0;
 	this.reset(position.x,position.y,this.element);
 	this.createSun = new Phaser.Signal();
+	this.createBullet = new Phaser.Signal();
 }
 
 Plant.prototype = Object.create(Phaser.Sprite.prototype);
 Plant.prototype.constructor = Plant;
-
 
 Plant.prototype.reset = function(x,y,data){
 	Phaser.Sprite.prototype.reset.call(this,x,y);
@@ -40,10 +40,11 @@ Plant.prototype.reset = function(x,y,data){
 }
 
 Plant.prototype.shoot = function(){
+	if(!this.isShooter)return;
 	if(this.animations.getAnimation(this.animationName)){
 		this.animations.play(this.animationName);
 	}
-	//TO-DO create bullet
+	this.createBullet.dispatch(this.x,this.y-10);
 }
 
 Plant.prototype.update = function(){
@@ -63,8 +64,7 @@ Plant.prototype.update = function(){
 Plant.prototype.generateSun = function(){
 	if(!this.isSunProducer)return;
 	//TO-DO generate Sun
-	
-	this.createSun.dispatch();
+	this.createSun.dispatch(this.x,this.y);
 }
 
 

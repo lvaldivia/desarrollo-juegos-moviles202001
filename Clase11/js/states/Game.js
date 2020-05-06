@@ -42,7 +42,7 @@ Game.prototype = {
 			this.generateSun();
 		}
 		this.zombieElapsed+=this.game.time.elapsed;
-		/*if(this.zombieElapsed>=this.zombieTotalTime){
+		if(this.zombieElapsed>=this.zombieTotalTime){
 			if(this.currentZombie < this.totalZombie){
 				this.zombieElapsed  = 0;
 				this.currentZombie++;
@@ -52,25 +52,31 @@ Game.prototype = {
 				this.generateZombie(this.zombieData[this.currentZombie]);
 				this.zombieTotalTime =  this.zombieData[this.currentZombie].time * 1000;
 			}	
-		}*/
+		}
 		this.zombies.forEachAlive(function(zombie){
 			if(zombie.x < 50){
 				zombie.kill();
 			}
 		});
+
+		this.game.physics.arcade.overlap(this.zombies,this.bullets,null,this.damageZombie,this);
 	},
-	generateSun:function(){
+	damageZombie:function(zombie,bullet){
+		bullet.kill();
+		zombie.damage();
+	},
+	generateSun:function(posX,posY){
 		let newSun = this.suns.getFirstDead();
-		let x = this.game.rnd.integerInRange(40,420);
-		let y = -20;
+		let x = posX ? posX :  this.game.rnd.integerInRange(40,420);
+		let y =  posY ? posY :  -20;
+		let velocity = posX ? -this.sun_velocity : this.sun_velocity;
 		//if(!newSun){
-			newSun = new Sun(this,x,y,this.sun_velocity);
+			newSun = new Sun(this,x,y,velocity);
 			this.suns.add(newSun);
 			newSun.increaseSun.add(this.updateSuns,this);
 		/*}else{
-			newSun.reset(x,y);
+			newSun.reset(x,y,velocity);
 		}*/
-		
 	},
 	updateSuns:function(points){
 		this.numSums+=points;
@@ -114,10 +120,17 @@ Game.prototype = {
 			let plant = new Plant(this.game, {x: x,y: y},this.currentSelection);
 			this.plants.add(plant);
 			plant.createSun.add(this.generateSun,this);
+			plant.createBullet.add(this.generateBullet,this);
 			this.numSums -= this.currentSelection.cost;
 			this.clearSelection();
 			this.updateStats();
 		}
+	},
+	generateBullet:function(x,y){
+		//crear la bala
+		let bullet = new Bullet(this.game,x,y);
+		this.bullets.add(bullet);
+		this.hitSound.play();
 	},
 	createGUI:function(){
 		let sun = this.game.add.sprite(10,this.game.height - 20,'sun');
@@ -147,7 +160,6 @@ Game.prototype = {
 		},this);
 	},
 	updateStats:function(){
-		console.log("HOLAAAA");
 		this.sunLabel.text = this.numSums;
 	}
 }

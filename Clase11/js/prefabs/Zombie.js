@@ -26,6 +26,18 @@ Zombie.prototype.reset = function(x,y,data){
 	this.body.velocity.x = this.defaultVelocity;
 }
 
-Zombie.prototype.damage = function(){
-	//TO-DO damage
+Zombie.prototype.damage = function(amount){
+	Phaser.Sprite.prototype.damage.call(this, amount);
+	var emitter = this.game.add.emitter(this.x, this.y, 50);
+	emitter.makeParticles('bloodParticle');
+	emitter.minParticleSpeed.setTo(-100, -100);
+	emitter.maxParticleSpeed.setTo(100, 100);
+	emitter.gravity = 300;
+	emitter.start(true, 200, null, 100);
+	this.kill();
+
+  /*if(this.health <= 0) {
+    let corpse = this.game.add.sprite(this.x, this.bottom, 'deadZombie');
+    corpse.anchor.setTo(0.5, 1);
+  }*/
 }
