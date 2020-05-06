@@ -27,6 +27,7 @@ Zombie.prototype.reset = function(x,y,data){
 }
 
 Zombie.prototype.damage = function(amount){
+	console.log(this.health);
 	Phaser.Sprite.prototype.damage.call(this, amount);
 	var emitter = this.game.add.emitter(this.x, this.y, 50);
 	emitter.makeParticles('bloodParticle');
@@ -34,7 +35,10 @@ Zombie.prototype.damage = function(amount){
 	emitter.maxParticleSpeed.setTo(100, 100);
 	emitter.gravity = 300;
 	emitter.start(true, 200, null, 100);
-	this.kill();
+	if(this.health<=0){
+		this.kill();	
+	}
+	
 
   /*if(this.health <= 0) {
     let corpse = this.game.add.sprite(this.x, this.bottom, 'deadZombie');

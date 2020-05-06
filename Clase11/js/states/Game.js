@@ -58,12 +58,11 @@ Game.prototype = {
 				zombie.kill();
 			}
 		});
-
 		this.game.physics.arcade.overlap(this.zombies,this.bullets,null,this.damageZombie,this);
 	},
 	damageZombie:function(zombie,bullet){
 		bullet.kill();
-		zombie.damage();
+		zombie.damage(0.1);
 	},
 	generateSun:function(posX,posY){
 		let newSun = this.suns.getFirstDead();
