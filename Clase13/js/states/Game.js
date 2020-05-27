@@ -54,4 +54,38 @@ Game.prototype = {
     this.blocks.add(block);
     return block;
   },
+
+  getBlockFromColRow:function(position){
+    let foundBlock;
+    this.blocks.forEachAlive(function(block){
+      if(block.row == position.row && block.col == position.col){
+        foundBlock = block;
+      }
+    },this);
+    return foundBlock;
+  },
+  dropBlock : function(sourceRow,targetRow,col){
+    let block = this.getBlockFromColRow({row:sourceRow,col:col});
+    let targetY = 150 + targetRow * (this.BLOCK_SIZE + 6);
+
+    block.row = targetRow;
+    let blockMovement = this.add.tween(block);
+    blockMovement.to({y:targetY},this.ANIMATION_TIME);
+    blockMovement.start();
+  },
+  dropReserveBlock:function(sourceRow,targetRow,col){
+    let x = 35 + col * (this.BLOCK_SIZE + 6);
+    let y = (this.BLOCK_SIZE + 6) * this.board.RESERVE_ROW + sourceRow  * (this.BLOCK_SIZE+ 6);
+    let block = this.createBlock(x,y,{asset:'block'+this.board.grid[targetRow][col]
+                                  , row: targetRow, col:col});
+
+    let targetY = 150 + targetRow * (this.BLOCK_SIZE + 6);
+
+    let blockMovement = this.add.tween(block);
+    blockMovement.to({y:targetY},this.ANIMATION_TIME);
+    blockMovement.start();
+  },
+  swapBlock:function(block1,block2){
+
+  }
 };
