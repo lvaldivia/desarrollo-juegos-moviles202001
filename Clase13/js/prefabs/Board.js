@@ -36,8 +36,10 @@ Board.prototype.populateGrid = function () {
       this.grid[i][j] = variaton;
     }
   }
-
-  //TODO CHAINs
+  let chains = this.findAllChains();
+  if(chains.length>0){
+    this.populateGrid();
+  }
 };
 
 Board.prototype.console = function () {
@@ -55,7 +57,7 @@ Board.prototype.populateReserveGrid = function(){
   let i,j,variation;
   for(i = 0; i < this.rows; i++){
     for(j = 0;j < this.cols; j++){
-      variation = Math.floor(Math.random()*this.blockVariation + 1);
+      variation = Math.floor(Math.random()*this.blockVariation) + 1;
       this.reserveGrid[i][j] = variation;
     }
   }
@@ -146,6 +148,10 @@ Board.prototype.clearChains = function(){
   let chainBlocks = this.findAllChains();
   chainBlocks.forEach(function(block){
     this.grid[block.row][block.col] = 0;
+    console.log(block);
+    
+    this.state.getBlockFromColRow(block).kill();  
+    
     //TODO matar block
   },this);
 }
@@ -154,6 +160,7 @@ Board.prototype.dropBlock = function(sourceRow,targetRow,col){
   this.grid[targetRow][col] = this.grid[sourceRow][col];
   this.grid[sourceRow][col] = 0;
   //TODO dropBlock en game
+  this.state.dropBlock(sourceRow, targetRow,col);
 }
 
 
@@ -161,6 +168,7 @@ Board.prototype.dropReservedBlock = function(sourceRow,targetRow,col){
   this.grid[targetRow][col] = this.reserveGrid[sourceRow][col];
   this.reserveGrid[sourceRow][col] = 0;
   //TODO dropBlockReserved en game
+  this.state.dropReserveBlock(sourceRow, targetRow,col);
 }
 
 Board.prototype.updateGrid = function(){

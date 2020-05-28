@@ -19,7 +19,10 @@ Game.prototype = {
       this.NUM_VARIATIONS
     );
     this.board.console();
-
+    this.isReversingSwap = false;
+    this.isBoardBlocked = false;
+    this.selectedBlock = null;
+    this.targetBlock = null;
     this.drawBoard();
   },
   drawBoard: function () {
@@ -50,8 +53,15 @@ Game.prototype = {
     }
   },
   createBlock: function (posX, posY, data) {
-    let block = new Block(this, this.ANIMATION_TIME, posX, posY, data);
-    this.blocks.add(block);
+    let block = this.blocks.getFirstExists(false);
+    if(!block){
+      block = new Block(this, this.ANIMATION_TIME, posX, posY, data);  
+      this.blocks.add(block);
+    }else{
+      block.reset(posX,posY,data);
+    }
+    block.chooseBlock.add(this.pickBlock,this);
+    
     return block;
   },
 
@@ -81,11 +91,75 @@ Game.prototype = {
 
     let targetY = 150 + targetRow * (this.BLOCK_SIZE + 6);
 
-    let blockMovement = this.add.tween(block);
+    let blockMovement = this.game.add.tween(block);
     blockMovement.to({y:targetY},this.ANIMATION_TIME);
     blockMovement.start();
   },
   swapBlock:function(block1,block2){
+    block1.scale.setTo(1);
+    let block1Movement = this.game.add.tween(block1);
+    block1Movement.to({x:block2.x,y:block2.y},this.ANIMATION_TIME);
+    block1Movement.onComplete.add(function(){
+      this.board.swap(block1,block2);
+      console.log("termino swap1");
+      if(!this.isReversingSwap){
+        let chains = this.board.findAllChains();
+        if(chains.length > 0){
+          console.log("hay chains");
+          this.updateBoard();
+        }else{
+          console.log("volver a hacer swap");
+          this.isReversingSwap = true;
+          this.swapBlock(block1,block2);
+        }
+      }else{
+        console.log("GAAAAA");
+        this.isReversingSwap = false;
+        this.clearSelection();
+      }
+    },this);
+    block1Movement.start();
+    let block2Movement = this.game.add.tween(block2);
+    block2Movement.to({x:block1.x,y:block1.y},this.ANIMATION_TIME);
+    block2Movement.start();
+  },
 
+  pickBlock:function(block){
+    if(this.isBoardBlocked){
+      return;
+    }
+    if(!this.selectedBlock){
+      block.scale.setTo(1.5);
+      this.selectedBlock = block;
+    }else{
+      this.targetBlock = block;
+      if(this.board.checkAdjacent(this.selectedBlock,this.targetBlock)){
+        this.isBoardBlocked = true;
+        this.swapBlock(this.selectedBlock,this.targetBlock);
+      }else{
+        this.clearSelection();
+      }
+    }
+  },
+  clearSelection:function(){
+    this.isBoardBlocked = false;
+    this.selectedBlock = null;
+    this.blocks.setAll("scale.x",1);
+    this.blocks.setAll("scale.y",1);
+  },
+  updateBoard:function(){
+    this.board.clearChains();
+    this.board.updateGrid();
+
+    this.game.time.events.add(this.ANIMATION_TIME,function(){
+      console.log("llego aca");
+      let chains = this.board.findAllChains();
+      if(chains.length>0){
+        console.log("hay chains en el board");
+        this.updateBoard();
+      }else{
+        this.clearSelection();
+      }        
+    },this);
   }
 };

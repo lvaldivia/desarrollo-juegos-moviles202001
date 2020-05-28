@@ -14,7 +14,7 @@ Block.prototype = Object.create(Phaser.Sprite.prototype);
 Block.prototype.constructor = Block;
 
 Block.prototype.pickBlock = function(){
-  this.chooseBlock.dispatch();
+  this.chooseBlock.dispatch(this);
 }
 
 Block.prototype.reset = function (x, y, data) {
@@ -29,7 +29,7 @@ Block.prototype.kill = function () {
   this.col = null;
   this.row = null;
 
-  this.game.time.event.add(
+  this.game.time.events.add(
     this.animationTime * 2,
     function () {
       Phaser.Sprite.kill.call();
