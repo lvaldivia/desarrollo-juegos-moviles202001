@@ -12,8 +12,23 @@
     </head>
     <body>
         <script type="text/javascript" src="cordova.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com//firebasejs/7.9.3/firebase-database.js"></script>
+        <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyCuPdcpiuQmpjeqDJWnrwfHw4qGypEbkLE",
+            authDomain: "miprimerchapoteomovil.firebaseapp.com",
+            databaseURL: "https://miprimerchapoteomovil.firebaseio.com",
+            projectId: "miprimerchapoteomovil",
+            storageBucket: "miprimerchapoteomovil.appspot.com",
+            messagingSenderId: "671481263649",
+            appId: "1:671481263649:web:9981de95b635e250ead560"
+        };
+        firebase.initializeApp(firebaseConfig);
+        </script>
         <script type="text/javascript" src="lib/phaser.min.js"></script>
         <script type="text/javascript" src="js/prefabs/Enemy.js"></script>
+        <script type="text/javascript" src="js/prefabs/Goal.js"></script>
         <script type="text/javascript" src="js/states/Game.js"></script>
         <script type="text/javascript" src="js/states/Preload.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
